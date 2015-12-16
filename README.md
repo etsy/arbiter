@@ -1,6 +1,9 @@
 # Arbiter
 Arbiter is a utility for generating XML Oozie workflows from a YAML specification.
 
+Read [the blog post](https://codeascraft.com/2015/12/16/introducing-arbiter-a-utility-for-generating-oozie-workflows/) that introduced statsd-jvm-profiler on [Code as Craft](https://codeascraft.com/), Etsy's engineering blog.
+
+
 ## Features
 1. Configuration driven: The mapping of the YAML workflow definition to the generated XML is highly configurable.
 2. Automatic dependency resolution and parallelism: Arbiter workflows are specified in terms of the dependencies between actions, rather than requiring the author to manually specify the flow.  Arbiter will order the workflow actions to satisfy the dependencies as well as insert fork/join pairs to run actions in parallel when possible.
@@ -9,6 +12,8 @@ Arbiter is a utility for generating XML Oozie workflows from a YAML specificatio
 Arbiter requires at least Java 7.
 
 Arbiter is built with Maven.  Run `mvn clean package` to build an uber-JAR suitable for use in running Arbiter.
+
+Pre-built Arbiter JAR files are also available in Maven Central.
 
 ## Usage
 Before writing workflows with Arbiter, you must define at least one configuration file.  See [Configuration](https://github.com/etsy/arbiter/wiki/Configuration) for details on writing a configuration file.
