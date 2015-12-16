@@ -1,0 +1,10 @@
+---
+killName: kill
+killMessage: message
+actionTypes:
+    - tag: testaction
+      name: test
+      xmlns: uri:oozie:test-action:0.1
+      defaultArgs: {a: [a, b, c] }
+      properties: {p1: v1, p2: v2}
+      configurationPosition: 1
