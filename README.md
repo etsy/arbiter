@@ -13,7 +13,14 @@ Arbiter requires at least Java 7.
 
 Arbiter is built with Maven.  Run `mvn clean package` to build an uber-JAR suitable for use in running Arbiter.
 
-Pre-built Arbiter JAR files are also available in Maven Central.
+Pre-built Arbiter JAR files are also available in Maven Central:
+```xml
+<dependency>
+  <groupId>com.etsy</groupId>
+  <artifactId>arbiter</artifactId>
+  <version>0.5.0</version>
+</dependency>
+```
 
 ## Usage
 Before writing workflows with Arbiter, you must define at least one configuration file.  See [Configuration](https://github.com/etsy/arbiter/wiki/Configuration) for details on writing a configuration file.
