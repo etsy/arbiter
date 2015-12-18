@@ -3,6 +3,8 @@ Arbiter is a utility for generating XML Oozie workflows from a YAML specificatio
 
 Read [the blog post](https://codeascraft.com/2015/12/16/introducing-arbiter-a-utility-for-generating-oozie-workflows/) that introduced Arbiter on [Code as Craft](https://codeascraft.com/), Etsy's engineering blog.
 
+## Mailing List
+There is a mailing list for this project at https://groups.google.com/forum/#!forum/arbiter-oozie.  If you have questions or suggestions for the project send them here!
 
 ## Features
 1. Configuration driven: The mapping of the YAML workflow definition to the generated XML is highly configurable.
