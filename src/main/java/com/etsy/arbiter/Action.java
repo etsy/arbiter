@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Etsy
+ * Copyright 2015-2016 Etsy
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,9 +15,6 @@
  */
 
 package com.etsy.arbiter;
-
-import com.google.common.base.Function;
-import com.google.common.collect.Collections2;
 
 import java.util.*;
 
