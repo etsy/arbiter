@@ -20,6 +20,7 @@ import com.etsy.arbiter.Action;
 import com.etsy.arbiter.Workflow;
 import com.etsy.arbiter.config.Config;
 import com.etsy.arbiter.exception.WorkflowGraphException;
+import com.etsy.arbiter.util.GraphvizGenerator;
 import com.etsy.arbiter.util.NamedArgumentInterpolator;
 import com.google.common.collect.ImmutableMap;
 import org.apache.commons.lang3.tuple.Pair;
@@ -48,10 +49,12 @@ public class WorkflowGraphBuilder {
      *
      * @param workflow Arbiter Workflow object
      * @param config Arbiter Config object
+     * @param outputDir Output directory for Graphviz graphs
+     * @param generateGraphviz Indicate if Graphviz graphs should be generated for workflows
      * @return DirectedAcyclicGraph DAG of the workflow
      * @throws WorkflowGraphException
      */
-    public static DirectedAcyclicGraph<Action, DefaultEdge> buildWorkflowGraph(Workflow workflow, Config config) throws WorkflowGraphException {
+    public static DirectedAcyclicGraph<Action, DefaultEdge> buildWorkflowGraph(Workflow workflow, Config config, String outputDir, boolean generateGraphviz) throws WorkflowGraphException {
         forkCount = 0;
         Map<String, Action> actionsByName = new HashMap<>();
         List<Action> workflowActions = workflow.getActions();
@@ -86,6 +89,10 @@ public class WorkflowGraphBuilder {
                     }
                 }
             }
+        }
+
+        if (generateGraphviz) {
+            GraphvizGenerator.generateGraphviz(inputGraph, outputDir + "/" + workflow.getName() + "-input.dot");
         }
 
         // Final DAG we will be returning

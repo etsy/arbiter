@@ -71,6 +71,7 @@ public class OozieWorkflowGenerator {
      *
      * @param outputBase The directory in which to output the Oozie workflows
      * @param workflows The workflows to convert
+     * @param generateGraphviz Indicate if Graphviz graphs should be generated for workflows
      */
     public void generateOozieWorkflows(String outputBase, List<Workflow> workflows, boolean generateGraphviz) throws IOException, ParserConfigurationException, TransformerException {
         File outputBaseFile = new File(outputBase);
@@ -91,7 +92,7 @@ public class OozieWorkflowGenerator {
             DirectedAcyclicGraph<Action, DefaultEdge> workflowGraph = null;
 
             try {
-                workflowGraph = WorkflowGraphBuilder.buildWorkflowGraph(workflow, config);
+                workflowGraph = WorkflowGraphBuilder.buildWorkflowGraph(workflow, config, outputDir, generateGraphviz);
             } catch (WorkflowGraphException w) {
                 LOG.error("Unable to generate workflow", w);
                 System.exit(1);

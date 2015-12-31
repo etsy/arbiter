@@ -64,7 +64,7 @@ public class WorkflowGraphBuilderTest {
     public void testMissingDependency() throws WorkflowGraphException {
         workflow.getActions().get(0).setDependencies(Sets.newHashSet("missing"));
         expectedException.expect(WorkflowGraphException.class);
-        WorkflowGraphBuilder.buildWorkflowGraph(workflow, config);
+        WorkflowGraphBuilder.buildWorkflowGraph(workflow, config, null, false);
     }
 
     @Test
@@ -72,19 +72,19 @@ public class WorkflowGraphBuilderTest {
         workflow.getActions().get(0).setDependencies(Sets.newHashSet("a2"));
         workflow.getActions().get(1).setDependencies(Sets.newHashSet("a1"));
         expectedException.expect(WorkflowGraphException.class);
-        WorkflowGraphBuilder.buildWorkflowGraph(workflow, config);
+        WorkflowGraphBuilder.buildWorkflowGraph(workflow, config, null, false);
     }
 
     @Test
     public void testSelfEdge() throws WorkflowGraphException {
         workflow.getActions().get(0).setDependencies(Sets.newHashSet("a1"));
         expectedException.expect(IllegalArgumentException.class);
-        WorkflowGraphBuilder.buildWorkflowGraph(workflow, config);
+        WorkflowGraphBuilder.buildWorkflowGraph(workflow, config, null, false);
     }
 
     @Test
     public void testNoDependencies() throws WorkflowGraphException {
-        DirectedAcyclicGraph<Action, DefaultEdge> graph = WorkflowGraphBuilder.buildWorkflowGraph(workflow, config);
+        DirectedAcyclicGraph<Action, DefaultEdge> graph = WorkflowGraphBuilder.buildWorkflowGraph(workflow, config, null, false);
         Set<String> expectedVertices = Sets.newHashSet("a1", "a2", "a3", "start", "end", "kill", "fork-0", "join-0");
         Set<String> expectedEdges = Sets.newHashSet("a3:join-0", "join-0:end", "a1:join-0", "fork-0:a2", "fork-0:a1", "a2:join-0", "fork-0:a3", "start:fork-0");
         assertEquals(expectedVertices, getVertices(graph));
@@ -94,7 +94,7 @@ public class WorkflowGraphBuilderTest {
     @Test
     public void testTwoActionFork() throws WorkflowGraphException {
         workflow.getActions().get(2).setDependencies(Sets.newHashSet("a1", "a2"));
-        DirectedAcyclicGraph<Action, DefaultEdge> graph = WorkflowGraphBuilder.buildWorkflowGraph(workflow, config);
+        DirectedAcyclicGraph<Action, DefaultEdge> graph = WorkflowGraphBuilder.buildWorkflowGraph(workflow, config, null, false);
         Set<String> expectedVertices = Sets.newHashSet("a1", "a2", "a3", "start", "end", "kill", "fork-0", "join-0");
         Set<String> expectedEdges = Sets.newHashSet("start:fork-0", "fork-0:a1", "fork-0:a2", "a1:join-0", "a2:join-0", "join-0:a3", "a3:end");
         assertEquals(expectedVertices, getVertices(graph));
@@ -105,7 +105,7 @@ public class WorkflowGraphBuilderTest {
     public void testSingleStartNode() throws WorkflowGraphException {
         workflow.getActions().get(1).setDependencies(Sets.newHashSet("a1"));
         workflow.getActions().get(2).setDependencies(Sets.newHashSet("a1"));
-        DirectedAcyclicGraph<Action, DefaultEdge> graph = WorkflowGraphBuilder.buildWorkflowGraph(workflow, config);
+        DirectedAcyclicGraph<Action, DefaultEdge> graph = WorkflowGraphBuilder.buildWorkflowGraph(workflow, config, null, false);
         Set<String> expectedVertices = Sets.newHashSet("a1", "a2", "a3", "start", "end", "kill", "fork-0", "join-0");
         Set<String> expectedEdges = Sets.newHashSet("fork-0:a2", "a3:join-0", "fork-0:a3", "start:a1", "a2:join-0", "join-0:end", "a1:fork-0");
         assertEquals(expectedVertices, getVertices(graph));
@@ -116,7 +116,7 @@ public class WorkflowGraphBuilderTest {
     public void testChain() throws WorkflowGraphException {
         workflow.getActions().get(1).setDependencies(Sets.newHashSet("a1"));
         workflow.getActions().get(2).setDependencies(Sets.newHashSet("a2"));
-        DirectedAcyclicGraph<Action, DefaultEdge> graph = WorkflowGraphBuilder.buildWorkflowGraph(workflow, config);
+        DirectedAcyclicGraph<Action, DefaultEdge> graph = WorkflowGraphBuilder.buildWorkflowGraph(workflow, config, null, false);
         Set<String> expectedVertices = Sets.newHashSet("a1", "a2", "a3", "start", "end", "kill");
         Set<String> expectedEdges = Sets.newHashSet("start:a1", "a1:a2", "a2:a3", "a3:end");
         assertEquals(expectedVertices, getVertices(graph));
@@ -126,7 +126,7 @@ public class WorkflowGraphBuilderTest {
     @Test
     public void testDisconnectedComponents() throws WorkflowGraphException {
         workflow.getActions().get(2).setDependencies(Sets.newHashSet("a2"));
-        DirectedAcyclicGraph<Action, DefaultEdge> graph = WorkflowGraphBuilder.buildWorkflowGraph(workflow, config);
+        DirectedAcyclicGraph<Action, DefaultEdge> graph = WorkflowGraphBuilder.buildWorkflowGraph(workflow, config, null, false);
         Set<String> expectedVertices = Sets.newHashSet("a1", "a2", "a3", "start", "end", "kill", "fork-0", "join-0");
         Set<String> expectedEdges = Sets.newHashSet("a3:join-0", "a2:a3", "join-0:end", "a1:join-0", "fork-0:a2", "fork-0:a1", "start:fork-0");
         assertEquals(expectedVertices, getVertices(graph));
