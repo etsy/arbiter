@@ -30,6 +30,7 @@ public class ActionType {
     private String xmlns;
     private Map<String, List<String>> defaultArgs;
     private Map<String, String> properties;
+    private Map<String, String> defaultInterpolations;
     private boolean lowPrecedence;
     private int configurationPosition;
 
@@ -89,6 +90,14 @@ public class ActionType {
         this.configurationPosition = configurationPosition;
     }
 
+    public Map<String, String> getDefaultInterpolations() {
+        return defaultInterpolations;
+    }
+
+    public void setDefaultInterpolations(Map<String, String> defaultInterpolations) {
+        this.defaultInterpolations = defaultInterpolations;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -96,15 +105,15 @@ public class ActionType {
 
         ActionType that = (ActionType) o;
 
-        if (configurationPosition != that.configurationPosition) return false;
         if (lowPrecedence != that.lowPrecedence) return false;
-        if (defaultArgs != null ? !defaultArgs.equals(that.defaultArgs) : that.defaultArgs != null) return false;
-        if (name != null ? !name.equals(that.name) : that.name != null) return false;
-        if (properties != null ? !properties.equals(that.properties) : that.properties != null) return false;
+        if (configurationPosition != that.configurationPosition) return false;
         if (tag != null ? !tag.equals(that.tag) : that.tag != null) return false;
+        if (name != null ? !name.equals(that.name) : that.name != null) return false;
         if (xmlns != null ? !xmlns.equals(that.xmlns) : that.xmlns != null) return false;
+        if (defaultArgs != null ? !defaultArgs.equals(that.defaultArgs) : that.defaultArgs != null) return false;
+        if (properties != null ? !properties.equals(that.properties) : that.properties != null) return false;
+        return defaultInterpolations != null ? defaultInterpolations.equals(that.defaultInterpolations) : that.defaultInterpolations == null;
 
-        return true;
     }
 
     @Override
@@ -114,6 +123,7 @@ public class ActionType {
         result = 31 * result + (xmlns != null ? xmlns.hashCode() : 0);
         result = 31 * result + (defaultArgs != null ? defaultArgs.hashCode() : 0);
         result = 31 * result + (properties != null ? properties.hashCode() : 0);
+        result = 31 * result + (defaultInterpolations != null ? defaultInterpolations.hashCode() : 0);
         result = 31 * result + (lowPrecedence ? 1 : 0);
         result = 31 * result + configurationPosition;
         return result;
@@ -127,6 +137,7 @@ public class ActionType {
                 ", xmlns='" + xmlns + '\'' +
                 ", defaultArgs=" + defaultArgs +
                 ", properties=" + properties +
+                ", defaultInterpolations=" + defaultInterpolations +
                 ", lowPrecedence=" + lowPrecedence +
                 ", configurationPosition=" + configurationPosition +
                 '}';

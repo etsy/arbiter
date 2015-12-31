@@ -133,7 +133,7 @@ public class WorkflowGraphBuilder {
                 Action kill = new Action();
                 kill.setType("kill");
                 kill.setName(config.getKillName());
-                kill.setProperty("message", NamedArgumentInterpolator.interpolate(config.getKillMessage(), ImmutableMap.of("name", workflow.getName())));
+                kill.setProperty("message", NamedArgumentInterpolator.interpolate(config.getKillMessage(), ImmutableMap.of("name", workflow.getName()), null));
                 workflowGraph.addVertex(kill);
             }
         } catch (DirectedAcyclicGraph.CycleFoundException e) {

@@ -195,7 +195,7 @@ public class OozieWorkflowGenerator {
         }
 
         // There is an outer action tag and an inner tag corresponding to the action type
-        Map<String, List<String>> interpolated = NamedArgumentInterpolator.interpolate(type.getDefaultArgs(), action.getNamedArgs());
+        Map<String, List<String>> interpolated = NamedArgumentInterpolator.interpolate(type.getDefaultArgs(), action.getNamedArgs(), type.getDefaultInterpolations());
         Map<String, String> mergedConfigurationProperties = type.getProperties();
         if (action.getConfigurationProperties() != null) {
             mergedConfigurationProperties.putAll(action.getConfigurationProperties());
@@ -209,7 +209,7 @@ public class OozieWorkflowGenerator {
                 .up();
 
         // We allow forcing a particular error transition regardless of other considerations
-        String interpolatedForceError = NamedArgumentInterpolator.interpolate(action.getForceError(), ImmutableMap.of("okTransition", okTransitionName));
+        String interpolatedForceError = NamedArgumentInterpolator.interpolate(action.getForceError(), ImmutableMap.of("okTransition", okTransitionName), type.getDefaultInterpolations());
         String errorTransitionName = interpolatedForceError != null ? interpolatedForceError : errorTransition.getName();
         // Find the enclosing fork/join pair
         // If an action is inside a fork/join, it should transition to the join on error

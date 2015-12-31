@@ -28,11 +28,15 @@ import static org.junit.Assert.*;
 
 public class NamedArgumentInterpolatorTest {
     private Map<String, String> namedArgs;
+    private Map<String, String> defaultArgs;
 
     @Before
     public void setup() {
         namedArgs = new HashMap<>();
         namedArgs.put("key", "value");
+
+        defaultArgs = new HashMap<>();
+        defaultArgs.put("default", "default_value");
     }
 
     @Test
@@ -40,7 +44,7 @@ public class NamedArgumentInterpolatorTest {
         Map<String, List<String>> args = new HashMap<>();
         args.put("one", Arrays.asList("two", "three"));
 
-        Map<String, List<String>> result = NamedArgumentInterpolator.interpolate(args, null);
+        Map<String, List<String>> result = NamedArgumentInterpolator.interpolate(args, null, null);
         assertTrue(result == args);
     }
 
@@ -49,7 +53,7 @@ public class NamedArgumentInterpolatorTest {
         Map<String, List<String>> args = new HashMap<>();
         args.put("one", Arrays.asList("two", "three"));
 
-        Map<String, List<String>> result = NamedArgumentInterpolator.interpolate(args, namedArgs);
+        Map<String, List<String>> result = NamedArgumentInterpolator.interpolate(args, namedArgs, null);
 
         assertFalse(args == result);
         assertEquals(args, result);
@@ -61,7 +65,7 @@ public class NamedArgumentInterpolatorTest {
         Map<String, List<String>> args = new HashMap<>();
         args.put("one", Arrays.asList("$$key$$", "three"));
 
-        Map<String, List<String>> result = NamedArgumentInterpolator.interpolate(args, namedArgs);
+        Map<String, List<String>> result = NamedArgumentInterpolator.interpolate(args, namedArgs, null);
         Map<String, List<String>> expected = new HashMap<>();
         expected.put("one", Arrays.asList("value", "three"));
 
@@ -73,7 +77,51 @@ public class NamedArgumentInterpolatorTest {
         String input = "hello $$key$$";
         String expected = "hello value";
 
-        assertEquals(expected, NamedArgumentInterpolator.interpolate(input, namedArgs));
+        assertEquals(expected, NamedArgumentInterpolator.interpolate(input, namedArgs, null));
 
+    }
+
+    @Test
+    public void testDefaultArgs() {
+        Map<String, List<String>> args = new HashMap<>();
+        args.put("one", Arrays.asList("$$key$$", "three"));
+        args.put("two", Arrays.asList("$$default$$", "four"));
+
+        Map<String, List<String>> result = NamedArgumentInterpolator.interpolate(args, namedArgs, defaultArgs);
+        Map<String, List<String>> expected = new HashMap<>();
+        expected.put("one", Arrays.asList("value", "three"));
+        expected.put("two", Arrays.asList("default_value", "four"));
+
+        assertEquals(expected, result);
+    }
+
+    @Test
+    public void testDefaultArgsOverwrite() {
+        Map<String, List<String>> args = new HashMap<>();
+        args.put("one", Arrays.asList("$$key$$", "three"));
+        defaultArgs.put("key", "default_value");
+
+        Map<String, List<String>> result = NamedArgumentInterpolator.interpolate(args, namedArgs, defaultArgs);
+        Map<String, List<String>> expected = new HashMap<>();
+        expected.put("one", Arrays.asList("value", "three"));
+
+        assertEquals(expected, result);
+    }
+
+    @Test
+    public void testSingleStringInterpolationWithDefaultArgs() {
+        String input = "hello $$default$$";
+        String expected = "hello default_value";
+
+        assertEquals(expected, NamedArgumentInterpolator.interpolate(input, namedArgs, defaultArgs));
+    }
+
+    @Test
+    public void testSingleStringInterpolationWithDefaultArgsOverwrite() {
+        defaultArgs.put("key", "default_value");
+        String input = "hello $$key$$";
+        String expected = "hello value";
+
+        assertEquals(expected, NamedArgumentInterpolator.interpolate(input, namedArgs, defaultArgs));
     }
 }

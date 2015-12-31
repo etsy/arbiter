@@ -21,6 +21,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import org.apache.commons.lang3.text.StrSubstitutor;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -40,13 +41,16 @@ public class NamedArgumentInterpolator {
      *
      * @param input The positional arguments possibly containing keys to be interpolated
      * @param namedArgs The key/value pairs used for interpolation
+     * @param defaultArgs Default values for the named args, used if an interpolation key has no value given
      *
      * @return A copy of input with variable interpolation performed
      */
-    public static Map<String, List<String>> interpolate(Map<String, List<String>> input, final Map<String, String> namedArgs) {
+    public static Map<String, List<String>> interpolate(Map<String, List<String>> input, final Map<String, String> namedArgs, final Map<String, String> defaultArgs) {
         if (namedArgs == null || input == null) {
             return input;
         }
+
+        final Map<String, String> interpolationArgs = createFinalInterpolationMap(namedArgs, defaultArgs);
 
         return Maps.transformValues(input, new Function<List<String>, List<String>>() {
             @Override
@@ -54,7 +58,7 @@ public class NamedArgumentInterpolator {
                 return Lists.transform(input, new Function<String, String>() {
                     @Override
                     public String apply(String input) {
-                        return StrSubstitutor.replace(input, namedArgs, PREFIX, SUFFIX);
+                        return StrSubstitutor.replace(input, interpolationArgs, PREFIX, SUFFIX);
                     }
                 });
             }
@@ -66,14 +70,30 @@ public class NamedArgumentInterpolator {
      *
      * @param input The string possibly containing keys to be interpolated
      * @param namedArgs The key/value pairs used for interpolation
+     * @param defaultArgs Default values for the named args, used if an interpolation key has no value given
      *
      * @return A copy of input with variable interpolation performed
      */
-    public static String interpolate(String input, final Map<String, String> namedArgs) {
+    public static String interpolate(String input, final Map<String, String> namedArgs, final Map<String, String> defaultArgs) {
         if (namedArgs == null || input == null) {
             return input;
         }
 
-        return StrSubstitutor.replace(input, namedArgs, PREFIX, SUFFIX);
+        final Map<String, String> interpolationArgs = createFinalInterpolationMap(namedArgs, defaultArgs);
+
+        return StrSubstitutor.replace(input, interpolationArgs, PREFIX, SUFFIX);
+    }
+
+    private static Map<String, String> createFinalInterpolationMap(final Map<String, String> namedArgs, final Map<String, String> defaultArgs) {
+        Map<String, String> interpolationArgs = new HashMap<>();
+        if (defaultArgs != null) {
+            // We want entries from namedArgs to overwrite entries from defaultArgs
+            interpolationArgs.putAll(defaultArgs);
+            interpolationArgs.putAll(namedArgs);
+        } else {
+            interpolationArgs.putAll(namedArgs);
+        }
+
+        return interpolationArgs;
     }
 }
