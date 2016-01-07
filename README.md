@@ -37,7 +37,7 @@ Flag        | Meaning
 -l <path>   | Specifies the path to a low-priority configuration file.  Low priority configurations will be overridden by standard configurations if they define overlapping settings.  Optional.
 -i <path>   | Specifies the path to a YAML workflow definition to process.  Required once, but can be specified multiple times to process multiple workflows.
 -o <path>   | Specifies the directory to which Arbiter will output the generated workflows.  Required.
--g          | Enables generating a PNG of the workflow graph using Graphviz.  The `dot` tool must be installed and on the `PATH` for this to work.
+-g [<format>]| Enables generating a image of the workflow graph using Graphviz.  The `dot` tool must be installed and on the `PATH` for this to work.  SVG is the default format but any format supported by `dot` may be specified as an argument to for this flag.
 -h          | Prints a usage message         
 
 ### Running Arbiter

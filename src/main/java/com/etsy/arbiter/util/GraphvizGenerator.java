@@ -41,8 +41,9 @@ public class GraphvizGenerator {
      *
      * @param graph The graph from which to generate the Graphviz file
      * @param fileName The name of the DOT file to be generated
+     * @param graphvizFormat The format in which Graphviz graphs should be generated if enabled
      */
-    public static void generateGraphviz(DirectedAcyclicGraph<Action, DefaultEdge> graph, String fileName) {
+    public static void generateGraphviz(DirectedAcyclicGraph<Action, DefaultEdge> graph, String fileName, String graphvizFormat) {
         DOTExporter<Action, DefaultEdge> exporter = new DOTExporter<>(new VertexNameProvider<Action>() {
             @Override
             public String getVertexName(Action o) {
@@ -69,7 +70,8 @@ public class GraphvizGenerator {
             exporter.export(writer, graph);
             writer.close();
 
-            List<String> dotShellCommand = Arrays.asList("dot", "-Tpng", fileName, String.format("-O%s", fileName.replace(".dot", ".png")));
+            List<String> dotShellCommand = Arrays.asList("dot", String.format("-T%s", graphvizFormat), fileName, String.format("-O%s",
+                    fileName.replace(".dot", String.format(".%s", graphvizFormat))));
             ProcessBuilder processBuilder = new ProcessBuilder(dotShellCommand)
                     .redirectErrorStream(true)
                     .directory(new File("."));

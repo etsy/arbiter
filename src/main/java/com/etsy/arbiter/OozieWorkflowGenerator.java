@@ -72,8 +72,9 @@ public class OozieWorkflowGenerator {
      * @param outputBase The directory in which to output the Oozie workflows
      * @param workflows The workflows to convert
      * @param generateGraphviz Indicate if Graphviz graphs should be generated for workflows
+     * @param graphvizFormat The format in which Graphviz graphs should be generated if enabled
      */
-    public void generateOozieWorkflows(String outputBase, List<Workflow> workflows, boolean generateGraphviz) throws IOException, ParserConfigurationException, TransformerException {
+    public void generateOozieWorkflows(String outputBase, List<Workflow> workflows, boolean generateGraphviz, String graphvizFormat) throws IOException, ParserConfigurationException, TransformerException {
         File outputBaseFile = new File(outputBase);
         FileUtils.forceMkdir(outputBaseFile);
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
@@ -92,14 +93,14 @@ public class OozieWorkflowGenerator {
             DirectedAcyclicGraph<Action, DefaultEdge> workflowGraph = null;
 
             try {
-                workflowGraph = WorkflowGraphBuilder.buildWorkflowGraph(workflow, config, outputDir, generateGraphviz);
+                workflowGraph = WorkflowGraphBuilder.buildWorkflowGraph(workflow, config, outputDir, generateGraphviz, graphvizFormat);
             } catch (WorkflowGraphException w) {
                 LOG.error("Unable to generate workflow", w);
                 System.exit(1);
             }
 
             if (generateGraphviz) {
-                GraphvizGenerator.generateGraphviz(workflowGraph, outputDir + "/" + workflow.getName() + ".dot");
+                GraphvizGenerator.generateGraphviz(workflowGraph, outputDir + "/" + workflow.getName() + ".dot", graphvizFormat);
             }
 
             Document xmlDoc = builder.newDocument();

@@ -66,8 +66,11 @@ public class Arbiter {
 
         List<Workflow> workflows = readWorkflowFiles(inputFiles);
 
+        boolean generateGraphviz = parsed.hasOption("g");
+        String graphvizFormat = parsed.getOptionValue("g", "svg");
+
         OozieWorkflowGenerator generator = new OozieWorkflowGenerator(merged);
-        generator.generateOozieWorkflows(outputDir, workflows, parsed.hasOption("g"));
+        generator.generateOozieWorkflows(outputDir, workflows, generateGraphviz, graphvizFormat);
     }
 
     /**
@@ -174,6 +177,7 @@ public class Arbiter {
         Option graphviz = OptionBuilder
                 .withArgName("graphviz")
                 .withLongOpt("graphviz")
+                .hasOptionalArg()
                 .withDescription("Generate the Graphviz DOT file and PNG")
                 .create("g");
 
