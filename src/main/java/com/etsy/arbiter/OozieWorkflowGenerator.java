@@ -122,6 +122,9 @@ public class OozieWorkflowGenerator {
                 Action transition = getTransition(workflowGraph, a);
                 switch (a.getType()) {
                     case "start":
+                        if (transition == null) {
+                            throw new RuntimeException("No transition found for start action");
+                        }
                         directives.add("start")
                                 .attr("to", transition.getName())
                                 .up();
@@ -141,6 +144,9 @@ public class OozieWorkflowGenerator {
                         directives.up();
                         break;
                     case "join":
+                        if (transition == null) {
+                            throw new RuntimeException(String.format("No transition found for join action %s", a.getName()));
+                        }
                         directives.add("join")
                                 .attr("name", a.getName())
                                 .attr("to", transition.getName())
