@@ -73,15 +73,24 @@ public class Workflow {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
 
         Workflow workflow = (Workflow) o;
 
-        if (actions != null ? !actions.equals(workflow.actions) : workflow.actions != null) return false;
-        if (errorHandler != null ? !errorHandler.equals(workflow.errorHandler) : workflow.errorHandler != null)
+        if (actions != null ? !actions.equals(workflow.actions) : workflow.actions != null) {
             return false;
-        if (name != null ? !name.equals(workflow.name) : workflow.name != null) return false;
+        }
+        if (errorHandler != null ? !errorHandler.equals(workflow.errorHandler) : workflow.errorHandler != null) {
+            return false;
+        }
+        if (name != null ? !name.equals(workflow.name) : workflow.name != null) {
+            return false;
+        }
 
         return true;
     }

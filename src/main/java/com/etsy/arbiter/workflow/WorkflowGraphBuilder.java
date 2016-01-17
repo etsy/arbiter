@@ -40,6 +40,8 @@ import java.util.*;
  * @author Andrew Johnson
  */
 public class WorkflowGraphBuilder {
+    private WorkflowGraphBuilder() { }
+
     // Every fork/join pair needs a unique name
     // To keep the names short, we just number them sequentially
     private static int forkCount = 0;

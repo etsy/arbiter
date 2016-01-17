@@ -100,18 +100,36 @@ public class ActionType {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
 
         ActionType that = (ActionType) o;
 
-        if (lowPrecedence != that.lowPrecedence) return false;
-        if (configurationPosition != that.configurationPosition) return false;
-        if (tag != null ? !tag.equals(that.tag) : that.tag != null) return false;
-        if (name != null ? !name.equals(that.name) : that.name != null) return false;
-        if (xmlns != null ? !xmlns.equals(that.xmlns) : that.xmlns != null) return false;
-        if (defaultArgs != null ? !defaultArgs.equals(that.defaultArgs) : that.defaultArgs != null) return false;
-        if (properties != null ? !properties.equals(that.properties) : that.properties != null) return false;
+        if (lowPrecedence != that.lowPrecedence) {
+            return false;
+        }
+        if (configurationPosition != that.configurationPosition) {
+            return false;
+        }
+        if (tag != null ? !tag.equals(that.tag) : that.tag != null) {
+            return false;
+        }
+        if (name != null ? !name.equals(that.name) : that.name != null) {
+            return false;
+        }
+        if (xmlns != null ? !xmlns.equals(that.xmlns) : that.xmlns != null) {
+            return false;
+        }
+        if (defaultArgs != null ? !defaultArgs.equals(that.defaultArgs) : that.defaultArgs != null) {
+            return false;
+        }
+        if (properties != null ? !properties.equals(that.properties) : that.properties != null) {
+            return false;
+        }
         return defaultInterpolations != null ? defaultInterpolations.equals(that.defaultInterpolations) : that.defaultInterpolations == null;
 
     }

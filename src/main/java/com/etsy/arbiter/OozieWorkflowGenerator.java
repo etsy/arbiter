@@ -302,7 +302,7 @@ public class OozieWorkflowGenerator {
         }
 
         for (int i = 0; i < entries.size(); i++) {
-            if (configurationPosition == i ) {
+            if (configurationPosition == i) {
                 createConfigurationElement(properties, directives);
             }
             addKeyMultiValueElements(entries.get(i), directives);

@@ -32,6 +32,8 @@ import java.util.Map;
  * @author Andrew Johnson
  */
 public class NamedArgumentInterpolator {
+    private NamedArgumentInterpolator() { }
+
     public static final String PREFIX = "$$";
     public static final String SUFFIX = "$$";
 

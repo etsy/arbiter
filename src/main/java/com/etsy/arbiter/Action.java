@@ -114,20 +114,36 @@ public class Action {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
 
         Action action = (Action) o;
 
-        if (name != null ? !name.equals(action.name) : action.name != null) return false;
-        if (type != null ? !type.equals(action.type) : action.type != null) return false;
-        if (forceOk != null ? !forceOk.equals(action.forceOk) : action.forceOk != null) return false;
-        if (forceError != null ? !forceError.equals(action.forceError) : action.forceError != null) return false;
-        if (dependencies != null ? !dependencies.equals(action.dependencies) : action.dependencies != null)
+        if (name != null ? !name.equals(action.name) : action.name != null) {
             return false;
-        if (positionalArgs != null ? !positionalArgs.equals(action.positionalArgs) : action.positionalArgs != null)
+        }
+        if (type != null ? !type.equals(action.type) : action.type != null) {
             return false;
-        if (namedArgs != null ? !namedArgs.equals(action.namedArgs) : action.namedArgs != null) return false;
+        }
+        if (forceOk != null ? !forceOk.equals(action.forceOk) : action.forceOk != null) {
+            return false;
+        }
+        if (forceError != null ? !forceError.equals(action.forceError) : action.forceError != null) {
+            return false;
+        }
+        if (dependencies != null ? !dependencies.equals(action.dependencies) : action.dependencies != null) {
+            return false;
+        }
+        if (positionalArgs != null ? !positionalArgs.equals(action.positionalArgs) : action.positionalArgs != null) {
+            return false;
+        }
+        if (namedArgs != null ? !namedArgs.equals(action.namedArgs) : action.namedArgs != null) {
+            return false;
+        }
         return !(configurationProperties != null ? !configurationProperties.equals(action.configurationProperties) : action.configurationProperties != null);
 
     }

@@ -98,14 +98,24 @@ public class Config {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
 
         Config config = (Config) o;
 
-        if (actionTypes != null ? !actionTypes.equals(config.actionTypes) : config.actionTypes != null) return false;
-        if (killMessage != null ? !killMessage.equals(config.killMessage) : config.killMessage != null) return false;
-        if (killName != null ? !killName.equals(config.killName) : config.killName != null) return false;
+        if (actionTypes != null ? !actionTypes.equals(config.actionTypes) : config.actionTypes != null) {
+            return false;
+        }
+        if (killMessage != null ? !killMessage.equals(config.killMessage) : config.killMessage != null) {
+            return false;
+        }
+        if (killName != null ? !killName.equals(config.killName) : config.killName != null) {
+            return false;
+        }
 
         return true;
     }

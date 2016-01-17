@@ -36,6 +36,8 @@ import java.util.List;
  * @author Andrew Johnson
  */
 public class Arbiter {
+    private Arbiter() { }
+
     public static void main(String[] args) throws ParseException, ConfigurationException, IOException, ParserConfigurationException, TransformerException {
         Options options = getOptions();
 

@@ -31,6 +31,8 @@ import java.util.*;
  * @author Andrew Johnson
  */
 public class ConfigurationMerger {
+    private ConfigurationMerger() { }
+
     /**
      * Merge multiple configurations together
      *

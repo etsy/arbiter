@@ -9,7 +9,7 @@ These are the basic steps for contributing to statsd-jvm-profiler:
 6. Push your changes to your fork.
 7. Send a pull request!
 
-Every pull request will be built with [Travis CI](https://travis-ci.org/etsy/arbiter).
+Every pull request will be built with [Travis CI](https://travis-ci.org/etsy/arbiter).  The CI build runs both unit tests and Checkstyle.
 
 # Contributors
 - Andrew Johnson [ajsquared](https://github.com/ajsquared)

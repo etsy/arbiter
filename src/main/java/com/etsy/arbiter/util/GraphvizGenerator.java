@@ -34,6 +34,8 @@ import java.util.List;
  * @author Andrew Johnson
  */
 public class GraphvizGenerator {
+    private GraphvizGenerator() { }
+
     private static final Logger LOG = Logger.getLogger(GraphvizGenerator.class);
 
     /**
