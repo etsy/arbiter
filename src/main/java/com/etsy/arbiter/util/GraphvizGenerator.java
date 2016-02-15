@@ -61,10 +61,10 @@ public class GraphvizGenerator {
             }
         }, new EdgeNameProvider<WorkflowEdge>() {
             @Override
-            public String getEdgeName(WorkflowEdge WorkflowEdge) {
+            public String getEdgeName(WorkflowEdge e) {
                 // This is the edge label
-                // We don't need to label any edges in the graph
-                return "";
+                // Edges with conditions are labeled, others are not
+                return e.getCondition() == null ? "" : e.getCondition();
             }
         });
         try {
