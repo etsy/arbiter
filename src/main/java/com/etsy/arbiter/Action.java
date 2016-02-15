@@ -29,6 +29,7 @@ public class Action {
     private String forceOk;
     private String forceError;
     private Set<String> dependencies;
+    private Map<String, String> conditionalDependencies;
     private Map<String, List<String>> positionalArgs;
     private Map<String, String> namedArgs;
     private Map<String, String> configurationProperties;
@@ -112,6 +113,14 @@ public class Action {
         this.configurationProperties = configurationProperties;
     }
 
+    public Map<String, String> getConditionalDependencies() {
+        return conditionalDependencies;
+    }
+
+    public void setConditionalDependencies(Map<String, String> conditionalDependencies) {
+        this.conditionalDependencies = conditionalDependencies;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -138,13 +147,16 @@ public class Action {
         if (dependencies != null ? !dependencies.equals(action.dependencies) : action.dependencies != null) {
             return false;
         }
+        if (conditionalDependencies != null ? !conditionalDependencies.equals(action.conditionalDependencies) : action.conditionalDependencies != null) {
+            return false;
+        }
         if (positionalArgs != null ? !positionalArgs.equals(action.positionalArgs) : action.positionalArgs != null) {
             return false;
         }
         if (namedArgs != null ? !namedArgs.equals(action.namedArgs) : action.namedArgs != null) {
             return false;
         }
-        return !(configurationProperties != null ? !configurationProperties.equals(action.configurationProperties) : action.configurationProperties != null);
+        return configurationProperties != null ? configurationProperties.equals(action.configurationProperties) : action.configurationProperties == null;
 
     }
 
@@ -155,6 +167,7 @@ public class Action {
         result = 31 * result + (forceOk != null ? forceOk.hashCode() : 0);
         result = 31 * result + (forceError != null ? forceError.hashCode() : 0);
         result = 31 * result + (dependencies != null ? dependencies.hashCode() : 0);
+        result = 31 * result + (conditionalDependencies != null ? conditionalDependencies.hashCode() : 0);
         result = 31 * result + (positionalArgs != null ? positionalArgs.hashCode() : 0);
         result = 31 * result + (namedArgs != null ? namedArgs.hashCode() : 0);
         result = 31 * result + (configurationProperties != null ? configurationProperties.hashCode() : 0);
@@ -169,6 +182,7 @@ public class Action {
                 ", forceOk='" + forceOk + '\'' +
                 ", forceError='" + forceError + '\'' +
                 ", dependencies=" + dependencies +
+                ", conditionalDependencies=" + conditionalDependencies +
                 ", positionalArgs=" + positionalArgs +
                 ", namedArgs=" + namedArgs +
                 ", configurationProperties=" + configurationProperties +

@@ -1,0 +1,15 @@
+---
+name: name
+actions:
+    - name: action1
+      type: test
+      positionalArgs: {one: [two, three] }
+    - name: action2
+      type: test
+      conditionalDependencies: { action1: "${test:elFunction()}" }
+      two: [four, six]
+      nameArg: value
+errorHandler:
+    name: error
+    type: errorTest
+    positionalArgs: {e: [f, g] }
