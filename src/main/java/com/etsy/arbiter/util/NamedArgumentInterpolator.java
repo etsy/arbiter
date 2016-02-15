@@ -17,10 +17,10 @@
 package com.etsy.arbiter.util;
 
 import com.google.common.base.Function;
-import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import org.apache.commons.lang3.text.StrSubstitutor;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -44,10 +44,12 @@ public class NamedArgumentInterpolator {
      * @param input The positional arguments possibly containing keys to be interpolated
      * @param namedArgs The key/value pairs used for interpolation
      * @param defaultArgs Default values for the named args, used if an interpolation key has no value given
+     * @param listArgs The key/value list pairs used for list interpolation. List interpolation allows for interpolating a list of values in place of a single key
+     *                 If any interpolation is performed this map is modified to remove the key that was interpolated
      *
      * @return A copy of input with variable interpolation performed
      */
-    public static Map<String, List<String>> interpolate(Map<String, List<String>> input, final Map<String, String> namedArgs, final Map<String, String> defaultArgs) {
+    public static Map<String, List<String>> interpolate(Map<String, List<String>> input, final Map<String, String> namedArgs, final Map<String, String> defaultArgs, final Map<String, List<String>> listArgs) {
         if (namedArgs == null || input == null) {
             return input;
         }
@@ -57,12 +59,22 @@ public class NamedArgumentInterpolator {
         return Maps.transformValues(input, new Function<List<String>, List<String>>() {
             @Override
             public List<String> apply(List<String> input) {
-                return Lists.transform(input, new Function<String, String>() {
-                    @Override
-                    public String apply(String input) {
-                        return StrSubstitutor.replace(input, interpolationArgs, PREFIX, SUFFIX);
+                List<String> result = new ArrayList<>(input.size());
+                for (String s : input) {
+                    String interpolated = StrSubstitutor.replace(s, interpolationArgs, PREFIX, SUFFIX);
+                    String listInterpolationKey = interpolated.replace(PREFIX, "").replace(SUFFIX, ""); // Strip out the prefix/suffix to get the actual key
+
+                    // If we have a standalone key we can use it for list interpolation
+                    // We only support standalone entries as it does not make sense to interpolate a list as part of a string
+                    if (listArgs != null && listArgs.containsKey(listInterpolationKey)) {
+                        result.addAll(listArgs.get(listInterpolationKey));
+                        listArgs.remove(listInterpolationKey);
+                    } else {
+                        result.add(interpolated);
                     }
-                });
+                }
+
+                return result;
             }
         });
     }
