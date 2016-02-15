@@ -28,7 +28,7 @@ import org.apache.commons.lang3.tuple.Triple;
 import org.jgrapht.Graphs;
 import org.jgrapht.alg.ConnectivityInspector;
 import org.jgrapht.experimental.dag.DirectedAcyclicGraph;
-import org.jgrapht.graph.DefaultEdge;
+import org.jgrapht.graph.WorkflowEdge;
 
 import java.util.*;
 
@@ -57,7 +57,7 @@ public class WorkflowGraphBuilder {
      * @return DirectedAcyclicGraph DAG of the workflow
      * @throws WorkflowGraphException
      */
-    public static DirectedAcyclicGraph<Action, DefaultEdge> buildWorkflowGraph(Workflow workflow, Config config, String outputDir, boolean generateGraphviz, String graphvizFormat) throws WorkflowGraphException {
+    public static DirectedAcyclicGraph<Action, WorkflowEdge> buildWorkflowGraph(Workflow workflow, Config config, String outputDir, boolean generateGraphviz, String graphvizFormat) throws WorkflowGraphException {
         forkCount = 0;
         Map<String, Action> actionsByName = new HashMap<>();
         List<Action> workflowActions = workflow.getActions();
@@ -68,7 +68,7 @@ public class WorkflowGraphBuilder {
         }
 
         // DAG of the workflow in its raw un-optimized state.
-        DirectedAcyclicGraph<Action, DefaultEdge> inputGraph = new DirectedAcyclicGraph<>(DefaultEdge.class);
+        DirectedAcyclicGraph<Action, WorkflowEdge> inputGraph = new DirectedAcyclicGraph<>(WorkflowEdge.class);
 
         // Add all the actions as vertices. At this point there are no connections within the graph, just vertices.
         for (Action a : workflowActions) {
@@ -99,13 +99,13 @@ public class WorkflowGraphBuilder {
         }
 
         // Final DAG we will be returning
-        DirectedAcyclicGraph<Action, DefaultEdge> workflowGraph;
+        DirectedAcyclicGraph<Action, WorkflowEdge> workflowGraph;
         Action startTransitionNode;
         Action endTransitionNode;
 
         try {
             // Process the graph into its properly connected and organized structure.
-            Triple<DirectedAcyclicGraph<Action, DefaultEdge>, Action, Action> workflowGraphTriple = processSubcomponents(inputGraph);
+            Triple<DirectedAcyclicGraph<Action, WorkflowEdge>, Action, Action> workflowGraphTriple = processSubcomponents(inputGraph);
             workflowGraph = workflowGraphTriple.getLeft();
             startTransitionNode = workflowGraphTriple.getMiddle();
             endTransitionNode = workflowGraphTriple.getRight();
@@ -155,8 +155,8 @@ public class WorkflowGraphBuilder {
      * @throws WorkflowGraphException
      * @throws DirectedAcyclicGraph.CycleFoundException
      */
-    private static DirectedAcyclicGraph<Action, DefaultEdge> buildComponentGraph(Set<Action> vertices, DirectedAcyclicGraph<Action, DefaultEdge> parentGraph) throws WorkflowGraphException, DirectedAcyclicGraph.CycleFoundException {
-        DirectedAcyclicGraph<Action, DefaultEdge> subgraph = buildSubgraph(parentGraph, vertices);
+    private static DirectedAcyclicGraph<Action, WorkflowEdge> buildComponentGraph(Set<Action> vertices, DirectedAcyclicGraph<Action, WorkflowEdge> parentGraph) throws WorkflowGraphException, DirectedAcyclicGraph.CycleFoundException {
+        DirectedAcyclicGraph<Action, WorkflowEdge> subgraph = buildSubgraph(parentGraph, vertices);
 
         // Start by pulling out the vertices with no incoming edges
         // These can run in parallel in a fork-join
@@ -167,7 +167,7 @@ public class WorkflowGraphBuilder {
             }
         }
 
-        DirectedAcyclicGraph<Action, DefaultEdge> result = new DirectedAcyclicGraph<>(DefaultEdge.class);
+        DirectedAcyclicGraph<Action, WorkflowEdge> result = new DirectedAcyclicGraph<>(WorkflowEdge.class);
 
         if (initialNodes.isEmpty()) {
             // This is a very odd case, but just in case we'll fail if it happens
@@ -194,8 +194,8 @@ public class WorkflowGraphBuilder {
         }
 
         // Now recursively process the graph with the processed nodes removed
-        Triple<DirectedAcyclicGraph<Action, DefaultEdge>, Action, Action> subComponentGraphTriple = processSubcomponents(subgraph);
-        DirectedAcyclicGraph<Action, DefaultEdge> subComponentGraph = subComponentGraphTriple.getLeft();
+        Triple<DirectedAcyclicGraph<Action, WorkflowEdge>, Action, Action> subComponentGraphTriple = processSubcomponents(subgraph);
+        DirectedAcyclicGraph<Action, WorkflowEdge> subComponentGraph = subComponentGraphTriple.getLeft();
 
         // Having processed the subcomponents, we attach the "last" node of the graph created here to
         // the "first" node of the subcomponent graph
@@ -223,18 +223,18 @@ public class WorkflowGraphBuilder {
      * @throws WorkflowGraphException
      * @throws DirectedAcyclicGraph.CycleFoundException
      */
-    private static Triple<DirectedAcyclicGraph<Action, DefaultEdge>, Action, Action> processSubcomponents(DirectedAcyclicGraph<Action, DefaultEdge> parentGraph) throws WorkflowGraphException, DirectedAcyclicGraph.CycleFoundException {
-        ConnectivityInspector<Action, DefaultEdge> inspector = new ConnectivityInspector<>(parentGraph);
+    private static Triple<DirectedAcyclicGraph<Action, WorkflowEdge>, Action, Action> processSubcomponents(DirectedAcyclicGraph<Action, WorkflowEdge> parentGraph) throws WorkflowGraphException, DirectedAcyclicGraph.CycleFoundException {
+        ConnectivityInspector<Action, WorkflowEdge> inspector = new ConnectivityInspector<>(parentGraph);
         List<Set<Action>> connectedComponents = inspector.connectedSets();
 
         // Recursively process each connected subcomponent of the graph
-        List<DirectedAcyclicGraph<Action, DefaultEdge>> componentGraphs = new ArrayList<>(connectedComponents.size());
+        List<DirectedAcyclicGraph<Action, WorkflowEdge>> componentGraphs = new ArrayList<>(connectedComponents.size());
         for (Set<Action> subComponent : connectedComponents) {
             componentGraphs.add(buildComponentGraph(subComponent, parentGraph));
         }
 
-        DirectedAcyclicGraph<Action, DefaultEdge> result = new DirectedAcyclicGraph<>(DefaultEdge.class);
-        for (DirectedAcyclicGraph<Action, DefaultEdge> subSubgraph : componentGraphs) {
+        DirectedAcyclicGraph<Action, WorkflowEdge> result = new DirectedAcyclicGraph<>(WorkflowEdge.class);
+        for (DirectedAcyclicGraph<Action, WorkflowEdge> subSubgraph : componentGraphs) {
             Graphs.addGraph(result, subSubgraph);
         }
 
@@ -243,7 +243,7 @@ public class WorkflowGraphBuilder {
             Pair<Action, Action> forkJoin = addForkJoin(result);
             Action fork = forkJoin.getLeft();
             Action join = forkJoin.getRight();
-            for (DirectedAcyclicGraph<Action, DefaultEdge> subSubgraph : componentGraphs) {
+            for (DirectedAcyclicGraph<Action, WorkflowEdge> subSubgraph : componentGraphs) {
                 for (Action vertex : subSubgraph.vertexSet()) {
                     // Vertices with no incoming edges attach directly to the fork
                     if (subSubgraph.inDegreeOf(vertex) == 0) {
@@ -287,9 +287,9 @@ public class WorkflowGraphBuilder {
      * @param vertices The set of actions (vertices) making up the subgraph
      * @return DirectedAcyclicGraph A new graph containing only the given vertices
      */
-    private static DirectedAcyclicGraph<Action, DefaultEdge> buildSubgraph(DirectedAcyclicGraph<Action, DefaultEdge> parentGraph, Set<Action> vertices) throws DirectedAcyclicGraph.CycleFoundException {
+    private static DirectedAcyclicGraph<Action, WorkflowEdge> buildSubgraph(DirectedAcyclicGraph<Action, WorkflowEdge> parentGraph, Set<Action> vertices) throws DirectedAcyclicGraph.CycleFoundException {
         // Create a new DAG to serve as the subgraph
-        DirectedAcyclicGraph<Action, DefaultEdge> subgraph = new DirectedAcyclicGraph<>(DefaultEdge.class);
+        DirectedAcyclicGraph<Action, WorkflowEdge> subgraph = new DirectedAcyclicGraph<>(WorkflowEdge.class);
 
         // Add all the vertices for this subgraph
         for (Action vertex : vertices) {
@@ -300,7 +300,7 @@ public class WorkflowGraphBuilder {
         for (Action vertex : vertices) {
             // Grab the parentGraph's edges between the parentGraph and this vertex and then add an edge in the subgraph to
             // match what the parentGraph has.
-            for (DefaultEdge edge : parentGraph.edgesOf(vertex)) {
+            for (WorkflowEdge edge : parentGraph.edgesOf(vertex)) {
                 subgraph.addDagEdge(parentGraph.getEdgeSource(edge), parentGraph.getEdgeTarget(edge), edge);
             }
         }
@@ -314,7 +314,7 @@ public class WorkflowGraphBuilder {
      * @param parentGraph The graph to which to add the fork/join actions
      * @return A Pair of actions. The left action is the fork and the right action is the join
      */
-    private static Pair<Action, Action> addForkJoin(DirectedAcyclicGraph<Action, DefaultEdge> parentGraph) {
+    private static Pair<Action, Action> addForkJoin(DirectedAcyclicGraph<Action, WorkflowEdge> parentGraph) {
         Action fork = new Action();
         fork.setName("fork-" + forkCount);
         fork.setType("fork");

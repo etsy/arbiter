@@ -29,7 +29,7 @@ import com.google.common.collect.Lists;
 import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
 import org.jgrapht.experimental.dag.DirectedAcyclicGraph;
-import org.jgrapht.graph.DefaultEdge;
+import org.jgrapht.graph.WorkflowEdge;
 import org.jgrapht.traverse.DepthFirstIterator;
 import org.w3c.dom.Document;
 import org.xembly.Directives;
@@ -90,7 +90,7 @@ public class OozieWorkflowGenerator {
             String outputDir = outputBase + "/" + workflow.getName();
             File outputDirFile = new File(outputDir);
             FileUtils.forceMkdir(outputDirFile);
-            DirectedAcyclicGraph<Action, DefaultEdge> workflowGraph = null;
+            DirectedAcyclicGraph<Action, WorkflowEdge> workflowGraph = null;
 
             try {
                 workflowGraph = WorkflowGraphBuilder.buildWorkflowGraph(workflow, config, outputDir, generateGraphviz, graphvizFormat);
@@ -115,7 +115,7 @@ public class OozieWorkflowGenerator {
             Action finalTransition = kill == null ? end : kill;
 
             Action errorTransition = errorHandler == null ? (kill == null ? end : kill) : errorHandler;
-            DepthFirstIterator<Action, DefaultEdge> iterator = new DepthFirstIterator<>(workflowGraph, start);
+            DepthFirstIterator<Action, WorkflowEdge> iterator = new DepthFirstIterator<>(workflowGraph, start);
 
             while (iterator.hasNext()) {
                 Action a = iterator.next();
@@ -135,7 +135,7 @@ public class OozieWorkflowGenerator {
                     case "fork":
                         directives.add("fork")
                                 .attr("name", a.getName());
-                        for (DefaultEdge edge : workflowGraph.outgoingEdgesOf(a)) {
+                        for (WorkflowEdge edge : workflowGraph.outgoingEdgesOf(a)) {
                             Action target = workflowGraph.getEdgeTarget(edge);
                             directives.add("path")
                                     .attr("start", target.getName())
@@ -190,7 +190,7 @@ public class OozieWorkflowGenerator {
      * @param errorTransition The error transition for this action if it is not inside a fork/join pair
      * @param directives The Xembly Directives object to which to add the new XML elements
      */
-    private void createActionElement(Action action, DirectedAcyclicGraph<Action, DefaultEdge> workflowGraph, Action transition, Action errorTransition, Directives directives) {
+    private void createActionElement(Action action, DirectedAcyclicGraph<Action, WorkflowEdge> workflowGraph, Action transition, Action errorTransition, Directives directives) {
         ActionType type = getActionType(action.getType());
 
         directives.add("action")
@@ -237,7 +237,7 @@ public class OozieWorkflowGenerator {
      * @param workflowGraph The graph in which to find the enclosing fork/join pair
      * @return The name of the join for the fork/join pair enclosing the given action, or null if the action is not inside a fork/join
      */
-    private String getEnclosingForkJoinName(Action action, DirectedAcyclicGraph<Action, DefaultEdge> workflowGraph) {
+    private String getEnclosingForkJoinName(Action action, DirectedAcyclicGraph<Action, WorkflowEdge> workflowGraph) {
         List<String> forks = new ArrayList<>();
         List<String> joins = new ArrayList<>();
 
@@ -253,7 +253,7 @@ public class OozieWorkflowGenerator {
         // First we traverse backwards from the given action, recording all the forks we see
         Action curr = action;
         while (workflowGraph.inDegreeOf(curr) > 0) {
-            DefaultEdge incoming = Lists.newArrayList(workflowGraph.incomingEdgesOf(curr)).get(0);
+            WorkflowEdge incoming = Lists.newArrayList(workflowGraph.incomingEdgesOf(curr)).get(0);
             curr = workflowGraph.getEdgeSource(incoming);
             if (curr.getType().equals("fork")) {
                 forks.add(curr.getName());
@@ -263,7 +263,7 @@ public class OozieWorkflowGenerator {
         // Then we traverse forwards from the given action, recording all the joins we see
         curr = action;
         while (workflowGraph.outDegreeOf(curr) > 0) {
-            DefaultEdge outgoing = Lists.newArrayList(workflowGraph.outgoingEdgesOf(curr)).get(0);
+            WorkflowEdge outgoing = Lists.newArrayList(workflowGraph.outgoingEdgesOf(curr)).get(0);
             curr = workflowGraph.getEdgeTarget(outgoing);
             if (curr.getType().equals("join")) {
                 joins.add(curr.getName());
@@ -429,8 +429,8 @@ public class OozieWorkflowGenerator {
      * @param a The action for which to get the transition
      * @return The OK transition for the given action
      */
-    private Action getTransition(DirectedAcyclicGraph<Action, DefaultEdge> workflowGraph, Action a) {
-        Set<DefaultEdge> transitions = workflowGraph.outgoingEdgesOf(a);
+    private Action getTransition(DirectedAcyclicGraph<Action, WorkflowEdge> workflowGraph, Action a) {
+        Set<WorkflowEdge> transitions = workflowGraph.outgoingEdgesOf(a);
         // end and kill nodes do not transition at all
         // forks have multiple transitions and are handled specially
         if (a.getType().equals("end") || a.getType().equals("kill") || a.getType().equals("fork")) {
@@ -442,7 +442,7 @@ public class OozieWorkflowGenerator {
             throw new RuntimeException("Multiple transitions found for action " + a.getName());
         }
 
-        DefaultEdge transition = transitions.iterator().next();
+        WorkflowEdge transition = transitions.iterator().next();
         return workflowGraph.getEdgeTarget(transition);
     }
 
@@ -455,7 +455,7 @@ public class OozieWorkflowGenerator {
      * @param type The type of action to find
      * @return The action of the given type, or null if none exists
      */
-    private Action getActionByType(DirectedAcyclicGraph<Action, DefaultEdge> workflowGraph, final String type) {
+    private Action getActionByType(DirectedAcyclicGraph<Action, WorkflowEdge> workflowGraph, final String type) {
         List<Action> actionList = Lists.newArrayList(Collections2.filter(workflowGraph.vertexSet(), new Predicate<Action>() {
             @Override
             public boolean apply(Action input) {

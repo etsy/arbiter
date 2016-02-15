@@ -22,7 +22,7 @@ import org.jgrapht.experimental.dag.DirectedAcyclicGraph;
 import org.jgrapht.ext.DOTExporter;
 import org.jgrapht.ext.EdgeNameProvider;
 import org.jgrapht.ext.VertexNameProvider;
-import org.jgrapht.graph.DefaultEdge;
+import org.jgrapht.graph.WorkflowEdge;
 
 import java.io.*;
 import java.util.Arrays;
@@ -45,8 +45,8 @@ public class GraphvizGenerator {
      * @param fileName The name of the DOT file to be generated
      * @param graphvizFormat The format in which Graphviz graphs should be generated if enabled
      */
-    public static void generateGraphviz(DirectedAcyclicGraph<Action, DefaultEdge> graph, String fileName, String graphvizFormat) {
-        DOTExporter<Action, DefaultEdge> exporter = new DOTExporter<>(new VertexNameProvider<Action>() {
+    public static void generateGraphviz(DirectedAcyclicGraph<Action, WorkflowEdge> graph, String fileName, String graphvizFormat) {
+        DOTExporter<Action, WorkflowEdge> exporter = new DOTExporter<>(new VertexNameProvider<Action>() {
             @Override
             public String getVertexName(Action o) {
                 // This must produce a unique id for each vertex
@@ -59,9 +59,9 @@ public class GraphvizGenerator {
                 // This is the value displayed in the vertices of the generated graph
                 return o.getName();
             }
-        }, new EdgeNameProvider<DefaultEdge>() {
+        }, new EdgeNameProvider<WorkflowEdge>() {
             @Override
-            public String getEdgeName(DefaultEdge defaultEdge) {
+            public String getEdgeName(WorkflowEdge WorkflowEdge) {
                 // This is the edge label
                 // We don't need to label any edges in the graph
                 return "";
