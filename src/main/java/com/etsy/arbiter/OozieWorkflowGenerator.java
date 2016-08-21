@@ -106,7 +106,8 @@ public class OozieWorkflowGenerator {
             Document xmlDoc = builder.newDocument();
 
             Directives directives = new Directives();
-            createRootElement(workflow.getName(), directives);
+            createRootElement(workflow.getName(), workflow.getXmlns(), directives);
+            addCredentials(workflow.getCredentials(), directives);
 
             Action kill = getActionByType(workflowGraph, "kill");
             Action end = getActionByType(workflowGraph, "end");
@@ -180,8 +181,45 @@ public class OozieWorkflowGenerator {
             writeDocument(outputDirFile, xmlDoc, transformer, workflow.getName(), currentDateString);
         }
     }
-
+    
     /**
+     * Add the Credential element to Oozie workflow
+     *
+     * @param credentials List of credential elements to be added to workflow
+     * @param directives The Xembly Directives object to which to add the new XML elements
+     * 
+     * @author venky
+     */
+	private void addCredentials(List<Credential> credentials, Directives directives) {
+    	if (credentials == null || credentials.isEmpty()) 
+    		return;
+    	directives.add("credentials");
+		for (Credential credential : credentials) {
+			ActionType type = getActionType(credential.getType());
+			
+			Map<String, String> mergedConfigurationProperties = new HashMap<>(type.getProperties());
+	        if (credential.getConfigurationProperties() != null) {
+	            mergedConfigurationProperties.putAll(credential.getConfigurationProperties());
+	        }
+			directives.add("credential")
+            .attr("name", credential.getName())
+            .attr("type", credential.getType());
+			for (Map.Entry<String, String> entry : mergedConfigurationProperties.entrySet()) {
+	            directives.add("property")
+	                    .add("name")
+	                    .set(entry.getKey())
+	                    .up()
+	                    .add("value")
+	                    .set(entry.getValue())
+	                    .up()
+	                    .up();
+	        }
+	        directives.up();
+		}
+		directives.up();
+	}
+
+	/**
      * Add the XML element for an action
      *
      * @param action The action for which to add the element
@@ -194,9 +232,12 @@ public class OozieWorkflowGenerator {
         ActionType type = getActionType(action.getType());
 
         directives.add("action")
-                .attr("name", action.getName())
-                .add(type.getTag());
-
+        		.attr("name", action.getName());
+        if (action.getCred() != null) {
+        	directives.attr("cred", action.getCred());
+        } 
+        directives.add(type.getTag());
+        
         if (type.getXmlns() != null) {
             directives.attr("xmlns", type.getXmlns());
         }
@@ -414,11 +455,12 @@ public class OozieWorkflowGenerator {
      * Create the root XML element
      *
      * @param name The name of the root element
+     * @param xmlns 
      * @param directives The Xembly Directives object to which to add the root element
      */
-    private void createRootElement(String name, Directives directives) {
+    private void createRootElement(String name, String xmlns, Directives directives) {
         directives.add("workflow-app")
-                .attr("xmlns", "uri:oozie:workflow:0.2")
+                .attr("xmlns", xmlns)
                 .attr("name", name);
     }
 

@@ -25,6 +25,7 @@ import java.util.*;
  */
 public class Action {
     private String name;
+    private String cred;
     private String type;
     private String forceOk;
     private String forceError;
@@ -40,7 +41,15 @@ public class Action {
     public void setName(String name) {
         this.name = name;
     }
+    
+    public String getCred() {
+		return cred;
+	}
 
+	public void setCred(String cred) {
+		this.cred = cred;
+	}
+	
     public String getType() {
         return type;
     }
@@ -126,6 +135,9 @@ public class Action {
         if (name != null ? !name.equals(action.name) : action.name != null) {
             return false;
         }
+        if (cred != null ? !cred.equals(action.cred) : action.cred != null) {
+            return false;
+        }
         if (type != null ? !type.equals(action.type) : action.type != null) {
             return false;
         }
@@ -151,6 +163,7 @@ public class Action {
     @Override
     public int hashCode() {
         int result = name != null ? name.hashCode() : 0;
+        result = 31 * result + (cred != null ? cred.hashCode() : 0);
         result = 31 * result + (type != null ? type.hashCode() : 0);
         result = 31 * result + (forceOk != null ? forceOk.hashCode() : 0);
         result = 31 * result + (forceError != null ? forceError.hashCode() : 0);
@@ -165,6 +178,7 @@ public class Action {
     public String toString() {
         return "Action{" +
                 "name='" + name + '\'' +
+                ", cred='" + cred + '\'' +
                 ", type='" + type + '\'' +
                 ", forceOk='" + forceOk + '\'' +
                 ", forceError='" + forceError + '\'' +
