@@ -203,7 +203,7 @@ public class OozieWorkflowGenerator {
 	        }
 			directives.add("credential")
             .attr("name", credential.getName())
-            .attr("type", credential.getType());
+            .attr("type", type.getTag());
 			for (Map.Entry<String, String> entry : mergedConfigurationProperties.entrySet()) {
 	            directives.add("property")
 	                    .add("name")
