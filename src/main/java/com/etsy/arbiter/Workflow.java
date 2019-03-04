@@ -36,13 +36,15 @@ public class Workflow {
         Constructor workflowConstructor = new Constructor(Workflow.class);
         TypeDescription workflowDescription = new TypeDescription(Workflow.class);
         workflowDescription.putListPropertyType("actions", Action.class);
+        workflowDescription.putListPropertyType("credentials", Credential.class);
         workflowConstructor.addTypeDescription(workflowDescription);
 
         return workflowConstructor;
     }
 
     private String name;
-
+    private String xmlns;
+    private List<Credential> credentials;
     private List<Action> actions;
 
     private Action errorHandler;
@@ -54,8 +56,24 @@ public class Workflow {
     public void setName(String name) {
         this.name = name;
     }
+    
+    public String getXmlns() {
+		return xmlns;
+	}
 
-    public List<Action> getActions() {
+	public void setXmlns(String xmlns) {
+		this.xmlns = xmlns;
+	}
+
+	public List<Credential> getCredentials() {
+		return credentials;
+	}
+
+	public void setCredentials(List<Credential> credentials) {
+		this.credentials = credentials;
+	}
+
+	public List<Action> getActions() {
         return actions;
     }
 
@@ -85,10 +103,16 @@ public class Workflow {
         if (actions != null ? !actions.equals(workflow.actions) : workflow.actions != null) {
             return false;
         }
+        if (credentials != null ? !credentials.equals(workflow.credentials) : workflow.credentials != null) {
+            return false;
+        }
         if (errorHandler != null ? !errorHandler.equals(workflow.errorHandler) : workflow.errorHandler != null) {
             return false;
         }
         if (name != null ? !name.equals(workflow.name) : workflow.name != null) {
+            return false;
+        }
+        if (xmlns != null ? !xmlns.equals(workflow.xmlns) : workflow.xmlns != null) {
             return false;
         }
 
@@ -98,6 +122,8 @@ public class Workflow {
     @Override
     public int hashCode() {
         int result = name != null ? name.hashCode() : 0;
+        result = 31 * result + (xmlns != null ? xmlns.hashCode() : 0);
+        result = 31 * result + (credentials != null ? credentials.hashCode() : 0);
         result = 31 * result + (actions != null ? actions.hashCode() : 0);
         result = 31 * result + (errorHandler != null ? errorHandler.hashCode() : 0);
         return result;
@@ -107,6 +133,8 @@ public class Workflow {
     public String toString() {
         return "Workflow{" +
                 "name='" + name + '\'' +
+                ", xmlns=" + xmlns +
+                ", credentials=" + credentials +
                 ", actions=" + actions +
                 ", errorHandler=" + errorHandler +
                 '}';
