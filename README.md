@@ -1,4 +1,7 @@
 # Arbiter [![Build Status](https://travis-ci.org/etsy/arbiter.svg)](https://travis-ci.org/etsy/arbiter)
+
+## Arbiter Has Been Archived and is No Longer Maintained
+
 Arbiter is a utility for generating XML Oozie workflows from a YAML specification.
 
 Read [the blog post](https://codeascraft.com/2015/12/16/introducing-arbiter-a-utility-for-generating-oozie-workflows/) that introduced Arbiter on [Code as Craft](https://codeascraft.com/), Etsy's engineering blog.
